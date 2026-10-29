@@ -38,7 +38,7 @@ Find the specification source, in this order:
 
 Also collect relevant project docs (README, `docs/`, ADRs) by path — pass paths, not contents.
 
-**Plan mode only** — write the acceptance criteria list yourself from the conversation (ID, behavior, kind: happy/edge/error). Unless in autopilot, show it to the user and ask once: "Đây là danh sách AC sẽ dùng làm đặc tả cho test — đúng chưa?" Proceed after confirmation or corrections. If the plan has 4+ independent behaviors or touches sensitive areas, recommend `/osf proposal` first but proceed if the user declines.
+**Plan mode only** — write the acceptance criteria list yourself from the conversation (ID, behavior, kind: happy/edge/error, level: unit/integration/e2e — user journeys are e2e). Unless in autopilot, show it to the user and ask once: "Đây là danh sách AC sẽ dùng làm đặc tả cho test — đúng chưa?" Proceed after confirmation or corrections. If the plan has 4+ independent behaviors or touches sensitive areas, recommend `/osf proposal` first but proceed if the user declines.
 
 ## Step 1: Red — launch osf-tdd
 
@@ -67,7 +67,7 @@ Read the `## 🔴 TDD Red Phase Report`.
 
 - **Gate: FAIL** → show the reasons and stop. Suggest the concrete fix: clarify Unclear ACs, install the missing framework (show the command — never run installs yourself without the user saying so), or re-run `/osf tdd`. Autopilot: this is a hard stop — report it.
 - **Gate: PASS** → independently confirm before trusting it:
-  1. Run the reported test command once → it must fail (Red). If everything passes, the gate is FAIL ("nothing to implement").
+  1. Run the reported test command (and the E2E command, if any) once → it must fail (Red). If everything passes, the gate is FAIL ("nothing to implement"). E2E failing only because the app can't start → show the env blocker; the gate still holds on the other tests.
   2. `grep -rnoE "\[AC-[0-9]+\]"` over the locked files → every non-Unclear AC ID appears.
   3. Confirm the lock: `git hash-object <locked files>` must match the hashes osf-tdd recorded (`## Lock` in `openspec/changes/<name>/tdd.md`, or the report in plan mode). Mismatch → FAIL. You only read and compare — osf-tdd writes the lock.
 
@@ -85,7 +85,7 @@ Read the `## 🔴 TDD Red Phase Report`.
 Spec mode:
 ```
 Change name: <change-name>
-TDD: tests in openspec/changes/<name>/tdd.md are the acceptance target. Done = test command `<cmd>` passes.
+TDD: tests in openspec/changes/<name>/tdd.md are the acceptance target. Done = test command `<cmd>` and E2E command `<cmd>` pass.
 <TEST LOCK block>
 ```
 
@@ -94,7 +94,7 @@ Plan mode:
 Plan summary: <…>
 User choice: Implement directly without spec
 Context: <decisions, assumed interfaces from the TDD report>
-TDD: done = test command `<cmd>` passes.
+TDD: done = test command `<cmd>` and E2E command `<cmd>` pass.
 <TEST LOCK block>
 ```
 
@@ -103,7 +103,7 @@ TDD: done = test command `<cmd>` passes.
 After osf-apply returns:
 
 1. **Lock check** — `git hash-object` the locked files again. Any hash differs or a file is missing → **CRITICAL: test lock broken** (show `git diff -- <file>`). Do not accept the result.
-2. **Tests** — run the test command. All locked tests must pass.
+2. **Tests** — run the test command, then the E2E command. All locked tests must pass, e2e included.
 3. **Test disputes** — if osf-apply reported a "Test dispute", show it to the user and stop; only the user decides whether a locked test changes (then re-run `/osf tdd` to re-lock).
 4. **Fix loop** — failing tests or broken lock → re-launch osf-apply with the failures + TEST LOCK block. Max 2 rounds, then stop and report.
 5. **Coverage** — run the coverage command. Report line (and branch if set) coverage for the production files this work changed (`git status --porcelain`, excluding test files). If the tool only reports a project total, report the total and say so. Below target → **WARNING** (not a blocker) with the uncovered files/lines.
@@ -114,9 +114,9 @@ Final output:
 
 **Source:** <change-name | plan>
 **Requirement coverage:** <covered>/<total> AC (100%)
-**Tests:** <n> locked · all passing · lock intact ✓
+**Tests:** <n> locked (unit <n> · integration <n> · e2e <n>) · all passing · lock intact ✓
 **Code coverage (changed files):** line <x>% (target <N>%)<, branch <y>% (target <M>%)>
-**Warnings:** <below-target files, pre-existing tests, unclear ACs — or "none">
+**Warnings:** <below-target files, pre-existing tests, unclear ACs, E2E gap — or "none">
 ```
 
 Do not run verify or archive yourself — the user (or autopilot) routes that.

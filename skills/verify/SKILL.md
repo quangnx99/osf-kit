@@ -20,7 +20,7 @@ TDD CHECK
 If `openspec/changes/<change-name>/tdd.md` exists, add these rules to the brief:
 
 - Recompute `git hash-object` for every file under `## Lock` in tdd.md; any mismatch or missing file → CRITICAL "test lock broken"
-- Run the test command from tdd.md; any failing locked test → CRITICAL
+- Run the test command and the E2E command from tdd.md; any failing locked test (e2e included) → CRITICAL
 - Every AC in the traceability table must still have a `[AC-n]`-tagged test → missing → CRITICAL
 - Run the coverage command; line/branch below the tdd.md target on changed production files → WARNING (not CRITICAL)
 

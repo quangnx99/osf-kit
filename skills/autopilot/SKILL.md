@@ -229,7 +229,7 @@ The Skill call above IS Step 1b. The tdd skill delegates test writing to osf-tdd
 
 When that line appears, your very next response must contain exactly two tool calls and **zero text before them**:
   1. TodoWrite — mark "TDD gate" completed, mark "Implement" in_progress.
-  2. Agent (`subagent_type: "osf-apply"`) — pass the change name, the test command from `openspec/changes/<change-name>/tdd.md`, `Done = test command passes`, and the TEST LOCK block from the `tdd` skill with the locked file list.
+  2. Agent (`subagent_type: "osf-apply"`) — pass the change name, the test command and E2E command from `openspec/changes/<change-name>/tdd.md`, `Done = both pass`, and the TEST LOCK block from the `tdd` skill with the locked file list.
 
 If the tdd skill reports Gate: FAIL → stop and report (legitimate stop point 1b).
 
