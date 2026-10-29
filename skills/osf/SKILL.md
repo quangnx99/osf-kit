@@ -5,7 +5,7 @@ metadata:
   kit: osf
 ---
 
-Available skills: analyze, apply, archive, autopilot, browser, chore, ci, clean-room, docker, docs, explain, explore, feat, fix, gap-audit, git, osf, perf, proposal, refactor, research, review, setup, test, uiux-design, verify
+Available skills: analyze, apply, archive, autopilot, browser, chore, ci, clean-room, docker, docs, explain, explore, feat, fix, gap-audit, git, osf, perf, proposal, refactor, research, review, setup, tdd, test, uiux-design, verify
 
 RUNTIME GUARD:
 This prompt is already the `osf` dispatcher. Do NOT invoke `osf` again. Resolve the target skill from ARGUMENTS and dispatch directly. Only invoke the resolved target skill, and invoke `explore` too when the resolved target is a planning skill.
@@ -21,6 +21,7 @@ Supporting subagents (used internally by skills):
 - osf-archive — Archive completed change to openspec/changes/archive/
 - osf-clean-room — Port a feature from an external repo: analyze temp clone and draft OpenSpec change
 - osf-gap-audit — Requirements checklist vs system → Gap Matrix (present/partial/missing); read-only
+- osf-tdd — Test-first Red phase: AC → failing tests with traceability + lock
 - osf-researcher — Web research (technical docs, best practices, comparisons, security advisories)
 - osf-uiux-designer — UI/UX design analysis and reports
 - osf-verify — Verify implementation matches spec
@@ -43,6 +44,7 @@ KIT_CATALOG (presentation source of truth — group order and blurbs are fixed):
 | planning | docker | Container, image, compose |
 | planning | setup | Scaffold project từ boilerplate |
 | spec | proposal | Tạo spec (proposal/design/tasks) |
+| spec | tdd | Sinh test trước, gate 100% AC rồi mới code |
 | spec | apply | Implement theo spec/plan |
 | spec | verify | Đối chiếu implementation vs spec |
 | spec | archive | Archive change đã xong |
@@ -69,10 +71,10 @@ Group headings for list output:
 LIST RULES (higher priority than dispatch — evaluate first):
 
 1. If "$0" is exactly one of: `list`, `ls`, `--list`, `-l`, run the list flow and STOP. Do not dispatch. Do not infer a skill.
-2. Print the catalog **exactly** in this structure (use KIT_CATALOG for skill order and blurbs; do **not** invent blurbs from frontmatter `description`). Header count is always the KIT_CATALOG size (26). Do not scan `~/.claude/skills` or any other disk path — KIT_CATALOG is the source of truth.
+2. Print the catalog **exactly** in this structure (use KIT_CATALOG for skill order and blurbs; do **not** invent blurbs from frontmatter `description`). Header count is always the KIT_CATALOG size (27). Do not scan `~/.claude/skills` or any other disk path — KIT_CATALOG is the source of truth.
 
 ```
-**OSF kit — 26 skills**
+**OSF kit — 27 skills**
 
 **Planning** (explore → implement, có thể tạo spec)
   feat        Tính năng mới
@@ -88,6 +90,7 @@ LIST RULES (higher priority than dispatch — evaluate first):
 
 **Spec workflow** (OpenSpec)
   proposal    Tạo spec (proposal/design/tasks)
+  tdd         Sinh test trước, gate 100% AC rồi mới code
   apply       Implement theo spec/plan
   verify      Đối chiếu implementation vs spec
   archive     Archive change đã xong
@@ -114,7 +117,7 @@ LIST RULES (higher priority than dispatch — evaluate first):
 
 **Supporting subagents:**
   osf-analyze, osf-apply, osf-archive, osf-clean-room,
-  osf-gap-audit, osf-researcher, osf-uiux-designer, osf-verify
+  osf-gap-audit, osf-researcher, osf-tdd, osf-uiux-designer, osf-verify
 ```
 
 3. STOP. No Skill tool. No further dispatch.
@@ -132,6 +135,7 @@ Dispatch rules:
    - refactor, cleanup without behavior change → `refactor`
    - performance, speed, latency, optimization → `perf`
    - docs, README, guide, comments → `docs`
+   - TDD, test-first, "viết test trước", generate tests from spec before coding → `tdd`
    - tests, coverage, unit/integration/e2e tests → `test`
    - CI/CD, workflow automation, pipelines → `ci`
    - Docker, containers, images, compose → `docker`
@@ -144,6 +148,7 @@ Dispatch rules:
    - research docs, best practices, comparisons, advisories → `research`
    - project scaffolding, boilerplate, initial setup → `setup`
    - proposal/spec creation → `proposal`
+   - test-first gate before implementation → `tdd`
    - implementation from plan/spec → `apply`
    - verification/review against spec → `verify`
    - archive completed change → `archive`

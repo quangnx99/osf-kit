@@ -18,7 +18,7 @@ feat, fix, chore, refactor, perf, docs, test, ci, docker, setup.
 
 ## Spawn supporting agents
 
-osf-analyze, osf-apply, osf-archive, osf-clean-room, osf-gap-audit, osf-researcher, osf-uiux-designer, osf-verify.
+osf-analyze, osf-apply, osf-archive, osf-clean-room, osf-gap-audit, osf-researcher, osf-tdd, osf-uiux-designer, osf-verify.
 
 - **Claude Code:** Agent tool `subagent_type: "<name>"`
 - **OMP:** `task` with `agent: "<name>"`. No Agent tool / `subagent_type`.

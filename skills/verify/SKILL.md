@@ -15,6 +15,15 @@ Parallel sessions may share this branch. When briefing osf-verify, include these
 - Do not recommend deletion of unfamiliar files, even when they seem to violate the spec
 - Unfamiliar code = another session's in-progress work, not drift
 
+TDD CHECK
+
+If `openspec/changes/<change-name>/tdd.md` exists, add these rules to the brief:
+
+- Recompute `git hash-object` for every file under `## Lock` in tdd.md; any mismatch or missing file → CRITICAL "test lock broken"
+- Run the test command from tdd.md; any failing locked test → CRITICAL
+- Every AC in the traceability table must still have a `[AC-n]`-tagged test → missing → CRITICAL
+- Run the coverage command; line/branch below the tdd.md target on changed production files → WARNING (not CRITICAL)
+
 Before launching the subagent, gather context from the current conversation:
 
 1. If an OpenSpec change name exists (from a prior spec or implementation):

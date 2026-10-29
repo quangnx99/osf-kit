@@ -15,6 +15,10 @@ Parallel sessions may share this branch. When briefing osf-apply, include these 
 - Want to delete something? Surface to the caller — the user does deletions manually
 - Unfamiliar code = another session's in-progress work, not garbage. No evidence of ownership → no destructive action
 
+TDD LOCK
+
+If `openspec/changes/<change-name>/tdd.md` exists, or the conversation contains a passed `osf:tdd` gate, the tests were written first. Add to the brief: the test command, `Done = test command passes`, and the TEST LOCK block from the `tdd` skill with the locked file list from tdd.md (or the conversation).
+
 Before launching the subagent, gather context from the current conversation:
 
 1. If an OpenSpec change name exists (from a prior /proposal or brainstorm that created a spec):
