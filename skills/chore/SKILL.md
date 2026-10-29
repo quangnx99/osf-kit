@@ -17,23 +17,6 @@ Parallel sessions may share this branch. Code you didn't write may belong to ano
 - Want to delete something? Ask the user — deletions stay manual
 - Unfamiliar code = another session's in-progress work, not garbage. No evidence of ownership → no destructive action
 
-## UI/UX Augmentation Gate
-
-If the request is to fix, build, refine, or optimize UI/UX (visuals, layout, styling, motion, accessibility, design polish), invoke the `ui` skill via the Skill tool BEFORE starting the chore workflow:
-
-```
-Skill(skill: "ui")
-```
-
-Then continue with chore — the `ui` skill layers DNA discovery, design lenses, and UI-specific scope rules on top of the chore mini-plan + impact map + direct execution flow.
-
-Signals it's UI/UX work:
-- Mentions UI, UX, design, layout, styling, CSS, look-and-feel, visuals
-- Asks to polish, redesign, restyle, beautify, or improve appearance
-- Targets components, pages, screens, or design tokens
-
-Order: call `Skill(skill: "ui")` first → its DNA gate and lenses apply → then run the chore Workflow with that guidance active. Decide on your own whether a request qualifies — read the wording and target files, then pick. Don't stall on a confirmation question.
-
 ## Workflow
 
 1. UNDERSTAND — read relevant files to confirm scope and affected areas

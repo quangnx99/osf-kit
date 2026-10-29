@@ -250,7 +250,7 @@ When that line appears, your very next response must contain exactly two tool ca
   2. Agent (`subagent_type: "osf-verify"`) — pass the change name. App defects found by e2e are failing locked tests: osf-verify reports them as CRITICAL and the Step 4 loop fixes them through osf-apply with the TEST LOCK block.
 
 **Step 3: Independent Verify**
-The Agent call above IS Step 3. If `openspec/changes/<change-name>/tdd.md` exists, include the TDD CHECK rules from the `verify` skill in the osf-verify brief, and include the TEST LOCK block in every osf-apply fix brief of Step 4. When osf-verify returns, immediately proceed to Step 4 in the same turn.
+The Agent call above IS Step 3. If `openspec/changes/<change-name>/tdd.md` exists, osf-verify runs the TDD check itself (lock hashes, locked tests, coverage); include the TEST LOCK block in every osf-apply fix brief of Step 4. When osf-verify returns, immediately proceed to Step 4 in the same turn.
 
 **Step 4: Verify-Fix Loop**
 After osf-verify returns its report, check for CRITICALs:

@@ -86,6 +86,14 @@ DEFAULT ASSUMPTION
 
    Also check if `openspec/changes/<name>/verify-fixes.md` exists. If it does, read it — this contains previously fixed issues that verification should skip.
 
+   **TDD check** — if `openspec/changes/<name>/tdd.md` exists, tests were written first and are the specification. Run these checks and add the findings to the report (dimension "TDD"):
+   - Recompute `git hash-object` for every file under `## Lock`; any mismatch or missing file → CRITICAL "test lock broken"
+   - Run the test command from tdd.md; any failing locked test → CRITICAL
+   - If tdd.md has an `## E2E` section: recompute hashes under `## E2E lock` (mismatch → CRITICAL), run its E2E command with the app started as recorded; failing locked e2e test → CRITICAL; app cannot start / env blocker → WARNING with the exact error
+   - Any AC still under `## E2E pending` → WARNING "e2e not written — run /osf e2e <name>" (not CRITICAL)
+   - Every AC in the traceability table must still have a `[AC-n]`-tagged test; missing → CRITICAL
+   - Run the coverage command; line/branch below the tdd.md target on changed production files → WARNING (not CRITICAL)
+
 4. **Detect change type and run verification dimensions**
 
    Determine which verification dimensions to run based on actual implementation — check the files that were modified:
@@ -119,6 +127,7 @@ DEFAULT ASSUMPTION
    | Architecture | ... (or "skipped — no structural changes") |
    | UI/UX | ... (or "skipped — no UI files") |
    | Test Coverage | ... (or "skipped — no test framework") |
+   | TDD | ... (or "skipped — no tdd.md") |
 
    ### All Issues (merged, sorted by priority)
    **CRITICAL**: [all critical findings]
