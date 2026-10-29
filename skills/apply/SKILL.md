@@ -17,7 +17,7 @@ Parallel sessions may share this branch. When briefing osf-apply, include these 
 
 TDD LOCK
 
-If `openspec/changes/<change-name>/tdd.md` exists, or the conversation contains a passed `osf:tdd` gate, the tests were written first. Add to the brief: the test command, `Done = test command passes`, and the TEST LOCK block from the `tdd` skill with the locked file list from tdd.md (or the conversation).
+If `openspec/changes/<change-name>/tdd.md` exists, or the conversation contains a passed `osf:tdd` gate, the tests were written first. Add to the brief: the test command (and the E2E command if an `## E2E` section exists), `Done = test command passes`, and the TEST LOCK block from the `tdd` skill with every locked file from tdd.md — `Locked test files` and `Locked e2e files` (or the conversation).
 
 Before launching the subagent, gather context from the current conversation:
 
