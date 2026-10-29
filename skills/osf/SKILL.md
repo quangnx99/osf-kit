@@ -5,7 +5,7 @@ metadata:
   kit: osf
 ---
 
-Available skills: analyze, apply, archive, autopilot, browser, chore, ci, clean-room, docker, docs, e2e, explain, explore, feat, fix, gap-audit, git, osf, perf, proposal, refactor, research, review, setup, tdd, test, uiux-design, verify
+Available skills: analyze, apply, archive, autopilot, browser, chore, ci, clean-room, docker, docs, e2e, enhance, explain, explore, feat, fix, gap-audit, git, osf, perf, proposal, refactor, research, review, setup, tdd, test, uiux-design, verify
 
 RUNTIME GUARD:
 This prompt is already the `osf` dispatcher. Do NOT invoke `osf` again. Resolve the target skill from ARGUMENTS and dispatch directly. Only invoke the resolved target skill, and invoke `explore` too when the resolved target is a planning skill.
@@ -60,6 +60,7 @@ KIT_CATALOG (presentation source of truth — group order and blurbs are fixed):
 | automation | git | commit/pull/push/merge/rebase/log |
 | automation | clean-room | Port feature từ repo ngoài |
 | automation | uiux-design | Phân tích & đề xuất UI/UX |
+| automation | enhance | Viết lại prompt cho rõ, không thực thi |
 | internal | explore | Shared explore stance, auto-load |
 | internal | osf | Dispatcher này |
 
@@ -111,6 +112,7 @@ LIST RULES (higher priority than dispatch — evaluate first):
   git         commit/pull/push/merge/rebase/log
   clean-room  Port feature từ repo ngoài
   uiux-design Phân tích & đề xuất UI/UX
+  enhance     Viết lại prompt cho rõ, không thực thi
 
 **Internal** (không gọi trực tiếp)
   explore     Shared explore stance, auto-load
@@ -158,6 +160,7 @@ Dispatch rules:
    - archive completed change → `archive`
    - UI/UX review or design direction → `uiux-design`
    - clean-room, port feature from external repo, clean-room reimplementation → `clean-room`
+   - enhance/rewrite/clarify a prompt, "làm rõ prompt", "viết lại prompt" → `enhance`
    - fully autonomous end-to-end workflow → `autopilot`
 5. If the request could reasonably map to multiple skills and no best match is clear, ask the user which skill to run. Do not guess when intent is ambiguous.
 6. Planning skills are: feat, fix, chore, refactor, perf, docs, test, ci, docker, setup.
