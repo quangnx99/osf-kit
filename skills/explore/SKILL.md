@@ -325,6 +325,8 @@ C. ★ Autopilot (smart autonomous mode)
    → Chooses Full, Verified, or Light based on impact and complexity
 D. Discuss more before implementation
    → Go back to planning or clarify remaining concerns
+E. Test-first (spec → failing tests → gate → implement)
+   → Create OpenSpec change, generate tests that must fail, then implement until they pass
 
 What's your call?
 ```
@@ -344,6 +346,9 @@ Pick one tier based on what the locked plan actually requires:
 - **Complex** (spec-first work):
   `/goal create the spec via the proposal skill, implement it via osf-apply, then run osf-verify and resolve every CRITICAL finding`
 
+- **Test-first** (spec-first work where the spec has clear acceptance criteria):
+  `/goal create the spec via the proposal skill, run the tdd skill on it (tests must fail before implementation), then run osf-verify and resolve every CRITICAL finding`
+
 Present it in the user's language, like:
 
 ```
@@ -358,6 +363,7 @@ Tailor the wording to the actual plan when it helps (name the change, name the f
 - B (Spec-first) → In the SAME turn: (1) use Skill tool to invoke `proposal`, (2) read `✅ Spec created: <change-name>` from its output, (3) immediately use Agent tool with `subagent_type: "osf-apply"` passing the change name. Do NOT end your turn between proposal and osf-apply. Do NOT ask the user to confirm the spec before applying — the user already chose this chain.
 - C (Autopilot) → use Skill tool to invoke `autopilot` with the locked requirement summary and implementation review plan.
 - D (Discuss more) → continue exploring. No implementation.
+- E (Test-first) → In the SAME turn: (1) invoke `proposal`, (2) read `✅ Spec created: <change-name>`, (3) invoke the `tdd` skill with that change name. `tdd` runs the gate and launches osf-apply itself — do NOT launch osf-apply from here.
 
 ---
 
@@ -397,11 +403,13 @@ Which path?
 When user chooses Path 1 → in the SAME turn: (1) use the Skill tool to invoke `proposal`, (2) read `✅ Spec created: <change-name>` from its output, (3) immediately use Agent tool with `subagent_type: "osf-apply"` passing the change name. The proposal skill has full conversation context — no need to summarize. Do NOT end your turn between proposal and osf-apply. Do NOT ask the user to confirm the spec before applying.
 When user chooses Path 2 → use Agent tool with `subagent_type: "osf-apply"`. Pass plan context.
 
+Either path can be test-first: if the user asks for TDD / tests before code, invoke the `tdd` skill after `proposal` (Path 1) or directly with the plan context (Path 2) instead of launching osf-apply — `tdd` launches osf-apply after its gate.
+
 ### Autopilot
 
 Autopilot is smart autonomous mode. It assesses impact, risk, sensitivity, and complexity, then chooses the right path:
 
-- Full: spec → implement → verify → archive
+- Full: spec → tdd → implement → e2e → verify → archive (`--no-tdd` / `--no-e2e` to skip a step)
 - Verified: implement → verify
 - Light: implement only
 
@@ -424,6 +432,8 @@ Implementation complete. Want to verify?
 ```
 
 When user says yes → use Agent tool with `subagent_type: "osf-verify"`.
+
+If the work added user-facing flows (UI screens, multi-step API journeys) or `openspec/changes/<name>/tdd.md` lists E2E pending ACs, offer the `e2e` skill before verifying: "Want e2e tests for the new flow? → Yes: I'll run /osf e2e". Never install an e2e framework without asking.
 
 ### After Verification (if spec was created)
 ```
@@ -489,6 +499,8 @@ The template above is in English for prompt readability. When outputting the act
 | osf-gap-audit | Requirements checklist vs codebase → Gap Matrix (present/partial/missing) | User wants coverage vs PM/spec/xlsx/checklist ("còn thiếu gì"), not blast radius. Prefer invoking skill `gap-audit` so extract/match phases stay interactive; use this subagent only when you need an isolated full-matrix pass with a complete brief (spec path, scope, roots). |
 | osf-researcher | Web research — technical docs, best practices, comparisons, security advisories | Discussion references external tech you can't verify from codebase, user needs comparison data, or topic requires up-to-date information |
 | osf-apply | Implement tasks from spec or conversation plan. Does NOT commit. | User chooses to start implementation |
+| osf-tdd | Writes failing unit/integration tests from spec/plan with `[AC-n]` traceability, locks them in tdd.md | Do not call directly — invoke the `tdd` skill, which runs the gate and hands off to osf-apply |
+| osf-e2e | Writes and runs user-journey e2e tests (UI/API) against a local app after implementation | Do not call directly — invoke the `e2e` skill, which handles setup consent and fix rounds |
 | osf-verify | Verify implementation matches spec | User chooses to verify after implementation |
 | osf-archive | Archive completed change to openspec/changes/archive/ | User chooses to finalize after verification (only if spec was created) |
 
